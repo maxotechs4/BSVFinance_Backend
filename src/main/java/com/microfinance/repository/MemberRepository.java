@@ -98,7 +98,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                 OR m.phoneNumber LIKE CONCAT('%', :keyword, '%')
                 OR LOWER(m.memberCode) LIKE LOWER(CONCAT('%', :keyword, '%'))
                 OR LOWER(m.centerPlace) LIKE LOWER(CONCAT('%', :keyword, '%'))
-                OR LOWER(m.centerCode) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                OR LOWER(m.groupId) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                OR LOWER(m.groupName) LIKE LOWER(CONCAT('%', :keyword, '%'))
                 OR LOWER(sub.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
                 OR sub.phoneNumber LIKE CONCAT('%', :keyword, '%')
                 OR LOWER(sub.memberCode) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -120,12 +121,17 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> searchIndividualMembers(@Param("keyword") String keyword, Pageable pageable);
 
     /** Head members whose center code matches — used by the Collection page search to surface the whole group. */
+        /** Head members whose group ID or group name matches — used by the Collection page search to surface the whole group. */
     @Query("""
             SELECT DISTINCT m FROM Member m
             LEFT JOIN FETCH m.subMembers
             WHERE m.headMember = true
-            AND LOWER(m.centerCode) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            AND (
+                LOWER(m.groupId) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                OR LOWER(m.groupName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            )
             ORDER BY m.name ASC
             """)
-    List<Member> searchGroupsByCenterCode(@Param("keyword") String keyword, Pageable pageable);
+    List<Member> searchGroupsByGroupId(@Param("keyword") String keyword, Pageable pageable);
+    
 }

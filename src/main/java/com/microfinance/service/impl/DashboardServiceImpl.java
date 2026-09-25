@@ -394,8 +394,10 @@ public class DashboardServiceImpl implements DashboardService {
                             .centerPlace(
                                     head.getCenterPlace()
                             )
-                            .centerCode(
-                                    head.getCenterCode()
+                            .groupId(
+                                    head.getGroupId()
+                             )
+                            .groupName(head.getGroupName()
                             )
                             .totalMembers(
                                     group.size()

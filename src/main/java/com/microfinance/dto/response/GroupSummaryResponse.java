@@ -25,7 +25,9 @@ public class GroupSummaryResponse {
 
     private String centerPlace;
 
-    private String centerCode;
+    private String groupId;
+
+    private String groupName;
 
     /** Head + all their sub-members */
     private int totalMembers;

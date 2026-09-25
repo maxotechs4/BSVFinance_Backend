@@ -1,5 +1,6 @@
 package com.microfinance.service.impl;
-
+import com.microfinance.dto.response.LoanInstallmentResponse;
+import com.microfinance.util.LoanScheduleCalculator;
 import com.microfinance.dto.request.MemberChargesRequest;
 import com.microfinance.dto.request.MemberRequest;
 import com.microfinance.dto.response.CollectionSearchResultResponse;
@@ -89,7 +90,7 @@ public class MemberServiceImpl implements MemberService {
         }
         return memberRepository.findByParentHead_IdOrderByNameAsc(headId)
                 .stream()
-                .map(m -> enrich(memberMapper.toResponse(m), m.getId()))
+                .map(m -> enrich(memberMapper.toResponse(m), m))
                 .toList();
     }
 
@@ -113,11 +114,12 @@ public class MemberServiceImpl implements MemberService {
                     .headId(head != null ? head.getId() : null)
                     .headName(head != null ? head.getName() : null)
                     .centerPlace(m.getCenterPlace())
-                    .centerCode(m.getCenterCode())
+                    .groupId(m.getGroupId())
+                    .groupName(m.getGroupName())
                     .build());
         }
 
-        for (Member head : memberRepository.searchGroupsByCenterCode(keyword, limit)) {
+            for (Member head : memberRepository.searchGroupsByGroupId(keyword, limit)) {
             List<String> names = new ArrayList<>();
             names.add(head.getName() + " (Head)");
             head.getSubMembers().stream().map(Member::getName).forEach(names::add);
@@ -126,7 +128,8 @@ public class MemberServiceImpl implements MemberService {
                     .headId(head.getId())
                     .headName(head.getName())
                     .centerPlace(head.getCenterPlace())
-                    .centerCode(head.getCenterCode())
+                    .groupId(head.getGroupId())
+                    .groupName(head.getGroupName())
                     .memberNames(names)
                     .build());
         }
@@ -142,7 +145,7 @@ public class MemberServiceImpl implements MemberService {
         }
         return memberRepository.findAllByPhoneNumber(phoneNumber.trim())
                 .stream()
-                .map(m -> enrich(memberMapper.toResponse(m), m.getId()))
+                .map(m -> enrich(memberMapper.toResponse(m), m))
                 .toList();
     }
 
@@ -158,7 +161,7 @@ public class MemberServiceImpl implements MemberService {
         Member saved = memberRepository.save(member);
         log.info("Updated charges for member {} - insurance={}, processing={}",
                 saved.getMemberCode(), saved.getInsuranceAmount(), saved.getProcessingAmount());
-        return enrich(memberMapper.toResponse(saved), saved.getId());
+        return enrich(memberMapper.toResponse(saved), saved);
     }
 
     /** Converts the free-text weekday from the request into the Weekday enum, with a clear error on bad input. */
@@ -227,7 +230,8 @@ public class MemberServiceImpl implements MemberService {
                 .headMember(request.isHeadMember())
                 .parentHead(parentHead)
                 .centerPlace(request.getCenterPlace())
-                .centerCode(request.getCenterCode())
+                .groupId(request.getGroupId())
+                .groupName(request.getGroupName())
                 .phoneNumber(request.getPhoneNumber())
                 .alternatePhoneNumber(request.getAlternatePhoneNumber())
                 .marriageStatus(request.getMarriageStatus())
@@ -297,7 +301,7 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(saved);
 
         log.info("Created member {} ({})", saved.getMemberCode(), saved.getName());
-        return enrich(memberMapper.toResponse(saved), saved.getId());
+        return enrich(memberMapper.toResponse(saved), saved);
     }
 
     @Override
@@ -316,7 +320,8 @@ public class MemberServiceImpl implements MemberService {
         member.setHeadMember(request.isHeadMember());
         member.setParentHead(parentHead);
         member.setCenterPlace(request.getCenterPlace());
-        member.setCenterCode(request.getCenterCode());      
+        member.setGroupId(request.getGroupId());
+        member.setGroupName(request.getGroupName());
         member.setPhoneNumber(request.getPhoneNumber());
         member.setAlternatePhoneNumber(request.getAlternatePhoneNumber());
         member.setMarriageStatus(request.getMarriageStatus());
@@ -392,7 +397,7 @@ public class MemberServiceImpl implements MemberService {
         );
 
         Member saved = memberRepository.save(member);
-        return enrich(memberMapper.toResponse(saved), saved.getId());
+        return enrich(memberMapper.toResponse(saved), saved);
     }
 
     @Override
@@ -424,7 +429,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberResponse getMemberById(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + id));
-        return enrich(memberMapper.toResponse(member), member.getId());
+        return enrich(memberMapper.toResponse(member), member);
     }
 
     @Override
@@ -439,7 +444,7 @@ public class MemberServiceImpl implements MemberService {
             // Dedicated query: matches the head's own fields OR any of their sub-members' names.
             Pageable pageable = PageRequest.of(page, size, sort);
             Page<Member> result = memberRepository.searchHeadsIncludingSubMembers(keyword, status, pageable);
-            Page<MemberResponse> mapped = result.map(m -> enrich(memberMapper.toResponse(m), m.getId()));
+            Page<MemberResponse> mapped = result.map(m -> enrich(memberMapper.toResponse(m), m));
             return PageResponse.of(mapped);
         }
 
@@ -447,7 +452,7 @@ public class MemberServiceImpl implements MemberService {
             List<MemberResponse> all = memberRepository.search(keyword, status, Pageable.unpaged())
                     .getContent()
                     .stream()
-                    .map(m -> enrich(memberMapper.toResponse(m), m.getId()))
+                    .map(m -> enrich(memberMapper.toResponse(m), m))
                     .filter(r -> matchesFilter(r, filter))
                     .toList();
 
@@ -459,7 +464,7 @@ public class MemberServiceImpl implements MemberService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Member> result = memberRepository.search(keyword, status, pageable);
-        Page<MemberResponse> mapped = result.map(m -> enrich(memberMapper.toResponse(m), m.getId()));
+        Page<MemberResponse> mapped = result.map(m -> enrich(memberMapper.toResponse(m), m));
         return PageResponse.of(mapped);
     }
 
@@ -469,7 +474,7 @@ public class MemberServiceImpl implements MemberService {
         Weekday parsed = parseWeekday(weekday);
         return memberRepository.findByWeekdayOrderByNameAsc(parsed)
                 .stream()
-                .map(m -> enrich(memberMapper.toResponse(m), m.getId()))
+                .map(m -> enrich(memberMapper.toResponse(m), m))
                 .toList();
     }
     private boolean matchesFilter(MemberResponse response, String filter) {
@@ -483,7 +488,19 @@ public class MemberServiceImpl implements MemberService {
         };
     }
 
-    private MemberResponse enrich(MemberResponse response, Long memberId) {
+    /**
+     * Enriches a mapped MemberResponse with everything that can't come
+     * straight off the entity: current-week payment status, cumulative
+     * totals, a fallback outstanding-amount calculation for legacy rows, and
+     * the printed repayment schedule (loanSchedule) used by the "Print" /
+     * loan-card view on the frontend.
+     *
+     * Takes the already-loaded Member entity (rather than re-fetching by id)
+     * since every call site already has it in hand from the query that
+     * produced this response in the first place.
+     */
+    private MemberResponse enrich(MemberResponse response, Member member) {
+        Long memberId = member.getId();
         int week = DateUtil.currentIsoWeek();
         int year = DateUtil.currentIsoWeekYear();
 
@@ -542,9 +559,21 @@ public class MemberServiceImpl implements MemberService {
             }
         }
 
+        // Printed repayment schedule (Loan Card / Repayment Schedule) for the
+        // member's "Print" view. Recomputed from the member's current loan
+        // terms every time — nothing is persisted, so it always stays in
+        // sync if loanAmount/totalWeeks/interestPercentage are edited later.
+        // Quietly comes back empty when a member doesn't have enough loan
+        // data yet (see LoanScheduleCalculator), which is fine — the print
+        // page simply hides that section in that case.
+        List<LoanInstallmentResponse> schedule = LoanScheduleCalculator.build(member);
+        response.setLoanSchedule(schedule);
+        // Member photo (doubles as proof / passport photo): boolean only here
+        // (see getMemberPhoto below for the raw bytes, fetched separately).
+        response.setHasMemberPhoto(member.getMemberPhotoData() != null && member.getMemberPhotoData().length > 0);
         return response;
     }
-    
+
     @Override
     @Transactional
     public MemberResponse closeLoan(Long memberId) {
@@ -579,11 +608,69 @@ public class MemberServiceImpl implements MemberService {
         member.setStatus(MemberStatus.CLOSED);
         Member saved = memberRepository.save(member);
         log.info("Closed loan for member {} (id={})", saved.getMemberCode(), saved.getId());
-        return enrich(memberMapper.toResponse(saved), saved.getId());
+        return enrich(memberMapper.toResponse(saved), saved);
     }
 
     private static final long MAX_NOMINEE_IMAGE_BYTES = 5L * 1024 * 1024; // 5MB
+    // ── Member's own photo (passport-size, shown on the printed Loan Application; doubles as proof) ──
 
+    @Override
+    @Transactional
+    public MemberResponse uploadMemberPhoto(Long id, MultipartFile file) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + id));
+
+        if (file == null || file.isEmpty()) {
+            throw new BadRequestException("Please choose a file to upload");
+        }
+        if (file.getSize() > MAX_NOMINEE_IMAGE_BYTES) {
+            throw new BadRequestException("File is too large — please upload a file under 5MB");
+        }
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.toLowerCase().startsWith("image/")) {
+            throw new BadRequestException("Only image files (JPG, PNG, etc.) are allowed");
+        }
+
+        try {
+            member.setMemberPhotoData(file.getBytes());
+        } catch (IOException e) {
+            throw new BadRequestException("Failed to read the uploaded photo — please try again");
+        }
+        member.setMemberPhotoContentType(contentType);
+        member.setMemberPhotoFileName(file.getOriginalFilename());
+
+        Member saved = memberRepository.save(member);
+        log.info("Uploaded photo for {} (id={})", saved.getMemberCode(), saved.getId());
+        return enrich(memberMapper.toResponse(saved), saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ImageDataResponse getMemberPhoto(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + id));
+        if (member.getMemberPhotoData() == null || member.getMemberPhotoData().length == 0) {
+            throw new ResourceNotFoundException("No photo uploaded for this member");
+        }
+        return ImageDataResponse.builder()
+                .data(member.getMemberPhotoData())
+                .contentType(member.getMemberPhotoContentType())
+                .fileName(member.getMemberPhotoFileName())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public MemberResponse deleteMemberPhoto(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + id));
+        member.setMemberPhotoData(null);
+        member.setMemberPhotoContentType(null);
+        member.setMemberPhotoFileName(null);
+        Member saved = memberRepository.save(member);
+        log.info("Deleted photo for {} (id={})", saved.getMemberCode(), saved.getId());
+        return enrich(memberMapper.toResponse(saved), saved);
+    }
     /**
      * Member profile "Upload Image" (Admin-only, enforced in SecurityConfig).
      * Adds a new nominee photo — members can have any number of them, so this
@@ -624,7 +711,7 @@ public class MemberServiceImpl implements MemberService {
         log.info("Uploaded nominee image for member {} (id={})", member.getMemberCode(), member.getId());
         Member refreshed = memberRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + id));
-        return enrich(memberMapper.toResponse(refreshed), refreshed.getId());
+        return enrich(memberMapper.toResponse(refreshed), refreshed);
     }
 
     /** Member profile "View Image" gallery: metadata only for every photo uploaded for this member. Available to every role. */
