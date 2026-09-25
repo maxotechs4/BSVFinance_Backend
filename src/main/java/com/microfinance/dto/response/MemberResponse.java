@@ -1,5 +1,5 @@
 package com.microfinance.dto.response;
-
+import java.util.List;
 import com.microfinance.entity.enums.MemberStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +30,8 @@ public class MemberResponse {
 
     private String groupCode;
     private String centerPlace;
-    private String centerCode;
+    private String groupId;
+    private String groupName;
     private String phoneNumber;
     private String alternatePhoneNumber;
     private String marriageStatus;
@@ -128,4 +129,7 @@ public class MemberResponse {
      * deducted. See OutstandingCalculator#calculateWithInterest.
      */
     private BigDecimal outstandingAmountWithInterest;
+    private List<LoanInstallmentResponse> loanSchedule;
+    /** True if a photo has been uploaded — raw bytes never travel in this DTO. */
+    private boolean hasMemberPhoto;
 }

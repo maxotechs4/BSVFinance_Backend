@@ -129,6 +129,35 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.success(memberService.getNomineeImages(id)));
     }
 
+    // ── Member's own photo (passport-size, shown on the printed Loan ────────
+    // ── Application, and doubles as ID proof) — a single photo; a new ──────
+    // ── upload replaces the previous one, unlike nomineeImages which ───────
+    // ── supports many. ──────────────────────────────────────────────────────
+        // ── Member's own photo (passport-size, shown on the printed Loan Application; doubles as proof) ──
+
+    /** Member profile page "Upload Photo" button: sets/replaces the member's photo. Admin-only, enforced in SecurityConfig. */
+    @PostMapping(value = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<MemberResponse>> uploadMemberPhoto(
+            @PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(ApiResponse.success("Photo uploaded", memberService.uploadMemberPhoto(id, file)));
+    }
+
+    /** Streams the member's photo bytes back with its content type. Available to every role — also used by the print page. */
+    @GetMapping("/{id}/photo")
+    public ResponseEntity<byte[]> getMemberPhoto(@PathVariable Long id) {
+        ImageDataResponse image = memberService.getMemberPhoto(id);
+        MediaType mediaType = image.getContentType() != null
+                ? MediaType.parseMediaType(image.getContentType())
+                : MediaType.APPLICATION_OCTET_STREAM;
+        return ResponseEntity.ok().contentType(mediaType).body(image.getData());
+    }
+
+    /** Removes the member's photo. Admin-only, enforced in SecurityConfig. */
+    @DeleteMapping("/{id}/photo")
+    public ResponseEntity<ApiResponse<MemberResponse>> deleteMemberPhoto(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success("Photo deleted", memberService.deleteMemberPhoto(id)));
+    }
+
     /** Member profile page View/Download actions: streams one specific nominee photo's raw bytes back with its content type. Available to every role. */
     @GetMapping("/{id}/nominee-images/{imageId}")
     public ResponseEntity<byte[]> getNomineeImage(@PathVariable Long id, @PathVariable Long imageId) {

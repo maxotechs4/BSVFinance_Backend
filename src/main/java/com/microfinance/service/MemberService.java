@@ -64,4 +64,15 @@ public interface MemberService {
     /** Member profile page "Delete" action inside the nominee image preview: permanently removes one photo. Admin-only, enforced in SecurityConfig. */
     void deleteNomineeImage(Long memberId, Long imageId);
 
+    // ── Member's own photo (passport-size, shown on the printed Loan Application; doubles as proof) ──
+
+    /** Member profile "Upload Photo" (Admin-only): sets/replaces the member's photo. */
+    MemberResponse uploadMemberPhoto(Long id, MultipartFile file);
+
+    /** Raw bytes + content type of the member's photo, for View/Download and the print page. */
+    ImageDataResponse getMemberPhoto(Long id);
+
+    /** Removes the member's photo. Admin-only. */
+    MemberResponse deleteMemberPhoto(Long id);
+
 }

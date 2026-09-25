@@ -34,6 +34,7 @@ com\microfinance\entity\enums\PaymentStatus.class
 com\microfinance\dto\response\InsuranceProcessingSummaryResponse.class
 com\microfinance\entity\enums\CapitalTransactionType.class
 com\microfinance\entity\Payment$PaymentBuilder.class
+com\microfinance\util\LoanScheduleCalculator.class
 com\microfinance\service\impl\SavingsPaymentServiceImpl.class
 com\microfinance\dto\response\NomineeImageMetaResponse.class
 com\microfinance\security\CustomUserDetailsService.class
@@ -129,12 +130,14 @@ com\microfinance\dto\response\CollectionSearchResultResponse.class
 com\microfinance\entity\StaffMember$StaffMemberBuilder.class
 com\microfinance\entity\StaffMember.class
 com\microfinance\entity\CapitalAccount.class
+com\microfinance\dto\response\LoanInstallmentResponse$LoanInstallmentResponseBuilder.class
 com\microfinance\dto\response\MonthlyReportResponse.class
 com\microfinance\controller\CapitalController.class
 com\microfinance\dto\response\YearlyReportResponse$MonthlyBreakdown.class
 com\microfinance\util\DateUtil.class
 com\microfinance\repository\NomineeImageRepository.class
 com\microfinance\entity\SavingsPayment.class
+com\microfinance\dto\response\LoanInstallmentResponse.class
 com\microfinance\entity\SavingsMember.class
 com\microfinance\controller\ReportController.class
 com\microfinance\dto\request\MemberChargesRequest.class

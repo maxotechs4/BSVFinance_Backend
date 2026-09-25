@@ -32,6 +32,7 @@ public class CollectionSearchResultResponse {
     private Long headId;
     private String headName;
     private String centerPlace;
-    private String centerCode;
+    private String groupId;
+    private String groupName;
     private List<String> memberNames;
 }

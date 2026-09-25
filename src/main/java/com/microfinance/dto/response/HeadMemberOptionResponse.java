@@ -21,6 +21,7 @@ public class HeadMemberOptionResponse {
     private String memberCode;
     private String name;
     private String centerPlace;
-    private String centerCode;
+    private String groupId;
+    private String groupName;
 
 }

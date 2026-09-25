@@ -42,8 +42,11 @@ public class MemberRequest {
     @Size(max = 100, message = "Center place must not exceed 100 characters")
     private String centerPlace;
 
-    @Size(max = 50, message = "Center code must not exceed 50 characters")
-    private String centerCode;
+    @Size(max = 50, message = "Group ID must not exceed 50 characters")
+    private String groupId;
+
+    @Size(max = 100, message = "Group name must not exceed 100 characters")
+    private String groupName;
 
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^[6-9]\\d{9}$", message = "Phone number must be a valid 10-digit number")

@@ -67,8 +67,11 @@ public class Member {
     @Column(name = "center_place", length = 100)
     private String centerPlace;
 
-    @Column(name = "center_code", length = 50)
-    private String centerCode;
+    @Column(name = "group_id", length = 50)
+    private String groupId;
+
+    @Column(name = "group_name", length = 100)
+    private String groupName;
 
     @Column(name = "phone_number", nullable = false, length = 15)
     private String phoneNumber;
@@ -161,6 +164,16 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<NomineeImage> nomineeImages = new ArrayList<>();
+    
+    
+    @Column(name = "member_photo_data")
+    private byte[] memberPhotoData;
+
+    @Column(name = "member_photo_content_type", length = 50)
+    private String memberPhotoContentType;
+
+    @Column(name = "member_photo_file_name", length = 255)
+    private String memberPhotoFileName;
 
     // ── Loan / collection ────────────────────────────────────────────────────
     @Column(name = "weekly_amount", nullable = false, precision = 12, scale = 2)

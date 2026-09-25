@@ -23,7 +23,8 @@ public class MemberMapper {
                 .subMemberCount(member.getSubMembers() != null ? member.getSubMembers().size() : 0)
                 .groupCode(member.getGroupCode())
                 .centerPlace(member.getCenterPlace())
-                .centerCode(member.getCenterCode())
+                .groupId(member.getGroupId())
+                .groupName(member.getGroupName())
                 .centerPlace(member.getCenterPlace())
                 .phoneNumber(member.getPhoneNumber())
                 .alternatePhoneNumber(member.getAlternatePhoneNumber())
@@ -80,7 +81,8 @@ public class MemberMapper {
                 .memberCode(member.getMemberCode())
                 .name(member.getName())
                 .centerPlace(member.getCenterPlace())
-                .centerCode(member.getCenterCode())
+                .groupId(member.getGroupId())
+                .groupName(member.getGroupName())
                 .build();
     }
 }
