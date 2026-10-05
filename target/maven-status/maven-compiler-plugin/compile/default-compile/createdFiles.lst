@@ -1,4 +1,5 @@
 com\microfinance\dto\response\CapitalAccountResponse.class
+com\microfinance\dto\response\StaffSummaryResponse.class
 com\microfinance\dto\response\YearlyReportResponse.class
 com\microfinance\entity\NomineeImage$NomineeImageBuilder.class
 com\microfinance\repository\PaymentRepository.class
@@ -29,6 +30,7 @@ com\microfinance\dto\response\LoginResponse.class
 com\microfinance\repository\CapitalAccountRepository.class
 com\microfinance\controller\SavingsPaymentController.class
 com\microfinance\entity\Member.class
+com\microfinance\service\StaffSummaryService.class
 com\microfinance\dto\response\PaymentResponse.class
 com\microfinance\entity\enums\PaymentStatus.class
 com\microfinance\dto\response\InsuranceProcessingSummaryResponse.class
@@ -68,6 +70,7 @@ com\microfinance\entity\CapitalAccount$CapitalAccountBuilder.class
 com\microfinance\mapper\SavingsPaymentMapper.class
 com\microfinance\dto\request\StaffMemberRequest.class
 com\microfinance\mapper\PaymentMapper.class
+com\microfinance\dto\response\StaffSummaryResponse$StaffSummaryResponseBuilder.class
 com\microfinance\service\impl\CapitalServiceImpl.class
 com\microfinance\dto\response\YearlyReportResponse$YearlyReportResponseBuilder.class
 com\microfinance\entity\WeeklyCollection.class

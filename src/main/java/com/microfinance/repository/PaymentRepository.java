@@ -1,5 +1,5 @@
 package com.microfinance.repository;
-
+import com.microfinance.entity.enums.MemberStatus;
 import com.microfinance.entity.Payment;
 import com.microfinance.entity.enums.PaymentMethod;
 import org.springframework.data.domain.Page;
@@ -177,4 +177,23 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     BigDecimal sumAmountPaidByMemberId(
             @Param("memberId") Long memberId
     );
+
+        /** Per staff: [staffId, total collected, pending shortfall on non-closed loans]. */
+    @Query("""
+            SELECT m.staffMember.id,
+                   COALESCE(SUM(p.amountPaid), 0),
+                   COALESCE(SUM(CASE WHEN m.status <> :closed THEN p.remainingAmount ELSE 0 END), 0)
+            FROM Payment p JOIN p.member m
+            WHERE m.staffMember IS NOT NULL
+            GROUP BY m.staffMember.id
+            """)
+    List<Object[]> collectionByStaff(@Param("closed") MemberStatus closed);
+        /** [memberId, total amount paid] for every member that has payments. */
+    @Query("""
+            SELECT p.member.id, COALESCE(SUM(p.amountPaid), 0)
+            FROM Payment p
+            GROUP BY p.member.id
+            """)
+    List<Object[]> totalPaidByMember();
+
 }
