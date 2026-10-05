@@ -3,7 +3,9 @@ package com.microfinance.controller;
 import com.microfinance.dto.request.StaffMemberRequest;
 import com.microfinance.dto.response.ApiResponse;
 import com.microfinance.dto.response.StaffMemberResponse;
+import com.microfinance.dto.response.StaffSummaryResponse;
 import com.microfinance.service.StaffMemberService;
+import com.microfinance.service.StaffSummaryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +27,17 @@ import java.util.List;
 public class StaffMemberController {
 
     private final StaffMemberService staffMemberService;
+    private final StaffSummaryService staffSummaryService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<StaffMemberResponse>>> getAllStaff() {
         return ResponseEntity.ok(ApiResponse.success(staffMemberService.getAllStaff()));
+    }
+
+    /** Per-staff Outstanding (OT), Collection, PAR and Pending totals for the Staff Details table. */
+    @GetMapping("/summary")
+    public ResponseEntity<ApiResponse<List<StaffSummaryResponse>>> getStaffSummary() {
+        return ResponseEntity.ok(ApiResponse.success(staffSummaryService.getSummaries()));
     }
 
     @GetMapping("/{id}")

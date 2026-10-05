@@ -42,6 +42,7 @@ D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\dto\response\Pa
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\dto\response\SavingsMemberResponse.java
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\dto\response\SavingsPaymentResponse.java
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\dto\response\StaffMemberResponse.java
+D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\dto\response\StaffSummaryResponse.java
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\dto\response\WeeklyReportResponse.java
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\dto\response\YearlyReportResponse.java
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\entity\Admin.java
@@ -102,6 +103,7 @@ D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\service\ReportS
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\service\SavingsMemberService.java
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\service\SavingsPaymentService.java
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\service\StaffMemberService.java
+D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\service\StaffSummaryService.java
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\util\DateUtil.java
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\util\LoanScheduleCalculator.java
 D:\bsv_finance\BSVFinance_Backend\src\main\java\com\microfinance\util\MemberIdGenerator.java

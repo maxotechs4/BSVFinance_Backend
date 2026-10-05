@@ -134,4 +134,23 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             """)
     List<Member> searchGroupsByGroupId(@Param("keyword") String keyword, Pageable pageable);
     
+        /** Per staff: [staffId, active client count, total outstanding] for loans that aren't closed. */
+    @Query("""
+            SELECT m.staffMember.id, COUNT(m), COALESCE(SUM(m.outstandingAmount), 0)
+            FROM Member m
+            WHERE m.staffMember IS NOT NULL AND m.status <> :closed
+            GROUP BY m.staffMember.id
+            """)
+    List<Object[]> outstandingByStaff(@Param("closed") MemberStatus closed);
+
+    /** Per staff: [staffId, PAR] where PAR is the outstanding of clients who currently have a shortfall. */
+    @Query("""
+            SELECT m.staffMember.id, COALESCE(SUM(m.outstandingAmount), 0)
+            FROM Member m
+            WHERE m.staffMember IS NOT NULL AND m.status <> :closed
+            AND (SELECT COALESCE(SUM(p.remainingAmount), 0) FROM Payment p WHERE p.member = m) > 0
+            GROUP BY m.staffMember.id
+            """)
+    List<Object[]> parByStaff(@Param("closed") MemberStatus closed);
+    List<Member> findByStaffMemberIsNotNullAndStatusNot(MemberStatus status);
 }
